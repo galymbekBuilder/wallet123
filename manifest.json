@@ -1,0 +1,9 @@
+{
+  "name": "Цифровые документы",
+  "short_name": "Документы",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1762d7",
+  "icons": []
+}

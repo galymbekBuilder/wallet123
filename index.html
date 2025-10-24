@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1762d7" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Цифровые документы</title>
+  <style>
+    :root{
+      --blue:#1762d7;         /* основной синий */
+      --blue-50:#e8f0ff;      /* светлый синий для состояний */
+      --text:#0b0b0b;         /* базовый текст */
+      --muted:#72777f;        /* вторичный текст */
+      --hair:#eeeeee;         /* тонкая линия */
+      --bg:#ffffff;           /* фон */
+      --radius-card:14px;     /* радиус карточек */
+      --radius-pill:20px;     /* радиус сегмента/кнопок */
+      --pad-x:16px;           /* горизонтальные отступы */
+      --gap-lg:12px;          /* основные промежутки */
+      --gap-sm:10px;          /* малые промежутки */
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font:16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ---------- Header ---------- */
+    header{
+      position:sticky; top:0; z-index:10;
+      padding:14px var(--pad-x);
+      display:flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,.95);
+      backdrop-filter:saturate(180%) blur(16px);
+      border-bottom:1px solid var(--hair);
+    }
+    .back{
+      width:28px; height:28px; border-radius:14px;
+      display:inline-flex; align-items:center; justify-content:center;
+      color:#1b1b1b; text-decoration:none; user-select:none;
+    }
+    .back::before{ content:"‹"; font-size:22px; line-height:1; }
+    h1{ margin:0; font-size:18px; font-weight:700; }
+
+    /* ---------- Layout ---------- */
+    main{ max-width:420px; margin:0 auto; padding:0 var(--pad-x); }
+    .page{ padding-top:12px; padding-bottom:calc(env(safe-area-inset-bottom, 16px) + 100px); }
+    .hidden{ display:none !important; }
+    .section-title{ margin:12px 0; font-size:20px; font-weight:700; }
+
+    /* ---------- List item ---------- */
+    .doc-item{
+      display:flex; align-items:center; gap:12px;
+      padding:10px 8px;
+      border:1px solid var(--hair);
+      border-radius:var(--radius-card);
+    }
+    .doc-icon{
+      width:36px; height:36px; border-radius:18px;
+      background:#f4f4f4; display:flex; align-items:center; justify-content:center; font-size:18px;
+    }
+    .chev{ margin-left:auto; color:#bdbdbd; font-size:20px; }
+
+    /* ---------- Buttons ---------- */
+    .btn{
+      width:100%;
+      padding:14px;
+      border-radius:var(--radius-pill);
+      border:2px solid var(--blue);
+      background:#fff; color:var(--blue);
+      font-weight:600; text-align:center;
+    }
+    .btn.primary{ background:var(--blue); color:#fff; border-color:var(--blue); }
+    .btn-row{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:16px var(--pad-x);
+      padding-bottom:calc(env(safe-area-inset-bottom, 16px) + 16px);
+      background:rgba(255,255,255,.94);
+      border-top:1px solid var(--hair);
+      display:flex; flex-direction:column; gap:12px;
+    }
+
+    /* ---------- Segmented control ---------- */
+    .seg{
+      display:flex; gap:6px; padding:4px; border-radius:var(--radius-pill);
+      background:#f1f1f1; width:100%;
+    }
+    .seg button{
+      flex:1; padding:8px 10px; border:none; border-radius:16px;
+      background:transparent; color:#444; font-weight:600;
+    }
+    .seg button.active{ background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+
+    /* ---------- Labels (Реквизиты) ---------- */
+    .label{ margin-top:16px; color:var(--muted); font-size:12px; }
+    .value{ margin-top:3px; }
+
+    /* ---------- Document frames (PDF) ---------- */
+    .card{ border:1px solid var(--hair); border-radius:var(--radius-card); padding:12px; }
+    .frames{ display:grid; gap:12px; margin-top:12px; }
+    .frame{
+      height:220px; border:1px dashed #e0e0e0; border-radius:var(--radius-card);
+      display:flex; align-items:center; justify-content:center;
+      background:#fafafa; position:relative; overflow:hidden; user-select:none;
+    }
+    .frame .ph{ color:#999; }
+    .frame .hint{ position:absolute; bottom:8px; left:8px; right:8px; color:#999; font-size:12px; }
+    .pdf-box{ position:absolute; inset:0; }
+    .pdf-box iframe{ width:100%; height:100%; border:0; }
+
+    /* ---------- Dialog (fallback share) ---------- */
+    dialog{ border:none; border-radius:16px; padding:0; width:min(500px, 94vw);
+            box-shadow:0 16px 40px rgba(0,0,0,.25); }
+    dialog::backdrop{ background:rgba(0,0,0,.35); }
+    .sheet{ padding:14px; }
+    .sheet h3{ margin:0 0 8px 0; }
+    .list-v{ display:flex; flex-direction:column; gap:8px; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <a id="backBtn" class="back hidden" aria-label="Назад"></a>
+    <h1 id="title">Цифровые документы</h1>
+  </header>
+
+  <main>
+    <!-- PAGE: Home -->
+    <section id="pageHome" class="page">
+      <div class="section-title">Мои документы</div>
+
+      <div class="doc-item" id="openIdCard">
+        <div class="doc-icon">🪪</div>
+        <div>Удостоверение личности</div>
+        <div class="chev">›</div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <button id="refreshBtn" class="btn">Обновить список документов</button>
+    </section>
+
+    <!-- PAGE: ID card -->
+    <section id="pageID" class="page hidden">
+      <!-- Segmented -->
+      <div class="seg" style="margin-bottom:12px;">
+        <button id="tabDoc" class="active">Документ</button>
+        <button id="tabReq">Реквизиты</button>
+      </div>
+
+      <!-- TAB: Документ -->
+      <div id="tabDocPane">
+        <div class="card">
+          <div class="frames">
+            <!-- FRONT -->
+            <div class="frame" id="frontFrame">
+              <input id="frontInput" type="file" accept="application/pdf" class="hidden" />
+              <div id="frontPlaceholder" class="ph">Загрузите лицевую сторону (PDF)</div>
+              <div id="frontPdf" class="pdf-box hidden"><iframe title="front"></iframe></div>
+              <div id="frontHint" class="hint">Долгое нажатие — заменить</div>
+            </div>
+            <!-- BACK -->
+            <div class="frame" id="backFrame">
+              <input id="backInput" type="file" accept="application/pdf" class="hidden" />
+              <div id="backPlaceholder" class="ph">Загрузите оборотную сторону (PDF)</div>
+              <div id="backPdf" class="pdf-box hidden"><iframe title="back"></iframe></div>
+              <div id="backHint" class="hint">Долгое нажатие — заменить</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Реквизиты -->
+      <div id="tabReqPane" class="hidden">
+        <div class="label">ФИО</div>
+        <div class="value" id="fioVal">Аманжан Галымбек Арманулы</div>
+
+        <div class="label">ИИН</div>
+        <div class="value" id="iinVal">031202550128</div>
+
+        <div class="label">Дата рождения</div>
+        <div class="value" id="dobVal">02.12.2003</div>
+
+        <div class="label">Номер документа</div>
+        <div class="value" id="docNoVal">060756844</div>
+
+        <div class="label">Дата выдачи</div>
+        <div class="value" id="issueVal">21.12.2019</div>
+
+        <div class="label">Срок действия</div>
+        <div class="value" id="expVal">20.12.2029</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom buttons (fixed) -->
+  <div id="actions" class="btn-row hidden">
+    <button id="showBtn" class="btn primary">Предъявить документ</button>
+    <button id="sendBtn" class="btn">Отправить документ</button>
+  </div>
+
+  <!-- Share fallback -->
+  <dialog id="shareDlg">
+    <div class="sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Отправить документ</h3>
+        <button id="closeShare" class="btn">Закрыть</button>
+      </div>
+      <p class="muted" style="margin:8px 0 12px 0">Куда отправить?</p>
+      <div class="list-v">
+        <button class="btn" data-action="mail">Mail (как вложение)</button>
+        <button class="btn" data-action="save">Сохранить файлы</button>
+        <button class="btn" data-action="copy">Скопировать ссылку</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // ---------- Simple navigation ----------
+    const pageHome = document.getElementById('pageHome');
+    const pageID   = document.getElementById('pageID');
+    const actions  = document.getElementById('actions');
+    const backBtn  = document.getElementById('backBtn');
+    const titleEl  = document.getElementById('title');
+
+    function go(page){
+      if(page === 'id'){
+        pageHome.classList.add('hidden');
+        pageID.classList.remove('hidden');
+        backBtn.classList.remove('hidden');
+        titleEl.textContent = 'Удостоверение личности';
+        actions.classList.remove('hidden');
+        location.hash = '#/id';
+      } else {
+        pageID.classList.add('hidden');
+        pageHome.classList.remove('hidden');
+        backBtn.classList.add('hidden');
+        titleEl.textContent = 'Цифровые документы';
+        actions.classList.add('hidden');
+        location.hash = '#/';
+      }
+    }
+    document.getElementById('openIdCard').onclick = () => go('id');
+    backBtn.onclick = () => go('home');
+    window.addEventListener('hashchange', () => { if(location.hash==='#/id') go('id'); else go('home'); });
+    if(location.hash==='#/id') go('id');
+
+    // ---------- Tabs ----------
+    const tabDocBtn = document.getElementById('tabDoc');
+    const tabReqBtn = document.getElementById('tabReq');
+    const tabDocPane = document.getElementById('tabDocPane');
+    const tabReqPane = document.getElementById('tabReqPane');
+
+    function activateTab(which){
+      const isDoc = which === 'doc';
+      tabDocBtn.classList.toggle('active', isDoc);
+      tabReqBtn.classList.toggle('active', !isDoc);
+      tabDocPane.classList.toggle('hidden', !isDoc);
+      tabReqPane.classList.toggle('hidden', isDoc);
+      document.getElementById('sendBtn').textContent = isDoc ? 'Отправить документ' : 'Отправить реквизиты';
+    }
+    tabDocBtn.onclick = () => activateTab('doc');
+    tabReqBtn.onclick = () => activateTab('req');
+
+    // ---------- IndexedDB for PDFs ----------
+    let db;
+    function openDB(){
+      return new Promise((res, rej) => {
+        const r = indexedDB.open('id_pdf_store_v1', 1);
+        r.onupgradeneeded = () => {
+          const d = r.result;
+          if(!d.objectStoreNames.contains('pdfs')) d.createObjectStore('pdfs');
+        };
+        r.onsuccess = () => { db = r.result; res(); };
+        r.onerror = () => rej(r.error);
+      });
+    }
+    function putPDF(key, blob){
+      return new Promise((res, rej) => {
+        const tx = db.transaction('pdfs','readwrite');
+        tx.objectStore('pdfs').put(blob, key);
+        tx.oncomplete = () => res();
+        tx.onerror = () => rej(tx.error);
+      });
+    }
+    function getPDF(key){
+      return new Promise((res, rej) => {
+        const tx = db.transaction('pdfs','readonly');
+        const rq = tx.objectStore('pdfs').get(key);
+        rq.onsuccess = () => res(rq.result || null);
+        rq.onerror = () => rej(rq.error);
+      });
+    }
+
+    // ---------- Frames & Inputs ----------
+    const frontInput = document.getElementById('frontInput');
+    const backInput  = document.getElementById('backInput');
+    const frontPlaceholder = document.getElementById('frontPlaceholder');
+    const backPlaceholder  = document.getElementById('backPlaceholder');
+    const frontPdfBox = document.getElementById('frontPdf');
+    const backPdfBox  = document.getElementById('backPdf');
+    const frontFrame  = document.getElementById('frontFrame');
+    const backFrame   = document.getElementById('backFrame');
+    const frontHint   = document.getElementById('frontHint');
+    const backHint    = document.getElementById('backHint');
+
+    // long-press helper (1200ms)
+    function longPress(el, cb){
+      let t;
+      el.addEventListener('touchstart', ()=>{ t = setTimeout(cb, 1200); }, {passive:true});
+      el.addEventListener('touchend', ()=> clearTimeout(t));
+      el.addEventListener('mousedown', ()=>{ t = setTimeout(cb, 1200); });
+      el.addEventListener('mouseup', ()=> clearTimeout(t));
+      el.addEventListener('mouseleave', ()=> clearTimeout(t));
+    }
+
+    // click on empty frame = choose; after set -> only long press
+    frontFrame.addEventListener('click', () => { if(frontPdfBox.classList.contains('hidden')) frontInput.click(); });
+    backFrame .addEventListener('click', () => { if(backPdfBox .classList.contains('hidden')) backInput.click();  });
+
+    longPress(frontFrame, () => { if(!frontPdfBox.classList.contains('hidden')) frontInput.click(); });
+    longPress(backFrame,  () => { if(!backPdfBox .classList.contains('hidden')) backInput.click();  });
+
+    function setPdfPreview(which, blob){
+      const url = URL.createObjectURL(blob);
+      const box = which==='front' ? frontPdfBox : backPdfBox;
+      const ph  = which==='front' ? frontPlaceholder : backPlaceholder;
+      const hint= which==='front' ? frontHint : backHint;
+      box.querySelector('iframe').src = url + '#toolbar=0&view=fitH';
+      ph.classList.add('hidden');
+      box.classList.remove('hidden');
+      hint.style.display = 'none';    // скрываем подсказку после первого добавления
+    }
+
+    frontInput.addEventListener('change', async (e) => {
+      const f = e.target.files[0]; if(!f) return;
+      await putPDF('front', f);
+      setPdfPreview('front', f);
+    });
+    backInput.addEventListener('change', async (e) => {
+      const f = e.target.files[0]; if(!f) return;
+      await putPDF('back', f);
+      setPdfPreview('back', f);
+    });
+
+    async function loadPDFs(){
+      const f = await getPDF('front'); if(f) setPdfPreview('front', f);
+      const b = await getPDF('back');  if(b) setPdfPreview('back',  b);
+    }
+
+    // ---------- Actions: show/share ----------
+    async function filesForShare(){
+      const out = [];
+      const f = await getPDF('front'); if(f) out.push(new File([f], 'front.pdf', {type:'application/pdf'}));
+      const b = await getPDF('back');  if(b) out.push(new File([b], 'back.pdf',  {type:'application/pdf'}));
+      return out;
+    }
+
+    document.getElementById('showBtn').onclick = async () => {
+      const f = await getPDF('front');
+      if(!f){ alert('Добавьте front.pdf'); return; }
+      const url = URL.createObjectURL(f);
+      const w = window.open(url, '_blank');
+      if(!w) alert('Разрешите всплывающие окна');
+    };
+
+    document.getElementById('sendBtn').onclick = async () => {
+      const docActive = !tabDocPane.classList.contains('hidden');
+      if(docActive){
+        const files = await filesForShare();
+        if(navigator.share && navigator.canShare && navigator.canShare({files})){
+          navigator.share({ files, title:'Удостоверение личности' });
+        }else{
+          shareDlg.showModal();
+        }
+      }else{
+        const text = [
+          'ФИО: ' + document.getElementById('fioVal').textContent,
+          'ИИН: ' + document.getElementById('iinVal').textContent,
+          'Дата рождения: ' + document.getElementById('dobVal').textContent,
+          'Номер документа: ' + document.getElementById('docNoVal').textContent,
+          'Дата выдачи: ' + document.getElementById('issueVal').textContent,
+          'Срок действия: ' + document.getElementById('expVal').textContent
+        ].join('\\n');
+        if(navigator.share){ navigator.share({ title:'Реквизиты документа', text }); }
+        else{
+          const a = document.createElement('a');
+          a.href = 'mailto:?subject=' + encodeURIComponent('Реквизиты документа') +
+                   '&body=' + encodeURIComponent(text);
+          a.click();
+        }
+      }
+    };
+
+    // Share fallback
+    const shareDlg = document.getElementById('shareDlg');
+    document.getElementById('closeShare').onclick = () => shareDlg.close();
+    shareDlg.addEventListener('click', (e) => {
+      if(e.target.matches('button[data-action="save"]')){
+        filesForShare().then(files => files.forEach(f => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(f);
+          a.download = f.name;
+          a.click();
+        }));
+      }
+      if(e.target.matches('button[data-action="mail"]')){
+        const a = document.createElement('a');
+        a.href = 'mailto:?subject=' + encodeURIComponent('Документ') + '&body=' + encodeURIComponent('Во вложении PDF.');
+        a.click();
+      }
+      if(e.target.matches('button[data-action="copy"]')){
+        navigator.clipboard?.writeText(location.href);
+        alert('Ссылка на приложение скопирована. Для отправки PDF сохраните файлы и прикрепите в мессенджере.');
+      }
+    });
+
+    // ---------- Init ----------
+    openDB().then(loadPDFs);
+    if('serviceWorker' in navigator){
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
+      });
+    }
+  </script>
+
+  <!-- минимальный sw прямо здесь; можешь вынести в sw.js -->
+  <script>
+    const SW_SRC = `
+      const CACHE='id-docs-v1';
+      const ASSETS=['./','./index.html','./manifest.json'];
+      self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))); self.skipWaiting();});
+      self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});
+      self.addEventListener('fetch',e=>{
+        const u=new URL(e.request.url);
+        if(u.pathname.endsWith('.html')||u.pathname==='/'){
+          e.respondWith(fetch(e.request).then(r=>{const c=r.clone(); caches.open(CACHE).then(x=>x.put(e.request,c)); return r;}).catch(()=>caches.match(e.request)));
+        }
+      });
+    `;
+    // Если нет sw.js в репо — создаём on-the-fly (для локальной проверки)
+    if(!('serviceWorker' in navigator)){} else {
+      fetch('sw.js', {method:'HEAD'}).catch(async () => {
+        const blob = new Blob([SW_SRC], {type:'text/javascript'});
+        const url = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(url);
+      });
+    }
+  </script>
+</body>
+</html>

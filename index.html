@@ -7,113 +7,106 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <style>
-    /* ====== БАЗА (iPhone 15 Pro — 393px) ====== */
+    /* ===== iPhone 15 Pro (393px) ===== */
     :root{
       --page-w:393px;
-      --bg:#fff;
+      --bg:#ffffff;
       --text:#0b0b0c;
-      --muted:#6f6f6f;
+      --muted:#8A8A8F;
       --line:#e7e7e7;
+      --seg:#F1F0F0;
       --chip:#F1F0F0;
-      --primary:#155EE1;
-      --primary-press:#0E4AB4;
-      --outline:#2E6BE6;
+      --blue:#155EE1;           /* цвет основных кнопок */
+      --blue-press:#0E4AB4;
+      --blue-outline:#2E6BE6;   /* цвет обводки для вторичной кнопки */
+      --dash:#D9D9D9;           /* пунктир для зоны скрина */
     }
-    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{height:100%}
     body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
+      margin:0;background:var(--bg);color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
       font-size:16px; line-height:1.25;
     }
-    .app{
-      width:100%; max-width:var(--page-w); margin:0 auto;
-      min-height:100dvh; display:flex; flex-direction:column; background:#fff;
-    }
+    .app{width:100%;max-width:var(--page-w);margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:#fff}
 
-    /* ====== ХЕДЕР ====== */
+    /* Header */
     header{
-      position:sticky; top:0;
-      display:flex; align-items:center; gap:8px;
-      background:#fff; padding:calc(env(safe-area-inset-top) + 6px) 16px 10px;
-      border-bottom:1px solid var(--line);
-      z-index:10;
+      position:sticky;top:0;background:#fff;
+      padding:calc(env(safe-area-inset-top) + 6px) 16px 10px;
+      display:flex;align-items:center;gap:8px;z-index:5;
     }
-    .back{width:28px;height:28px;display:grid;place-items:center;cursor:pointer;}
-    .title{font-size:18px;font-weight:700;}
+    .back{width:28px;height:28px;display:grid;place-items:center;cursor:pointer}
+    .title{font-size:18px;font-weight:700}
 
-    /* ====== СЕКЦИИ / СПИСОК ====== */
-    .section-title{margin:14px 16px 8px;font-weight:700;font-size:18px;}
-    .content{padding:0 16px 20px;flex:1;}
-    .list{border-radius:16px;}
-    .cell{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 6px 12px 0;
-    }
-    .cell + .cell{border-top:1px solid var(--line);}
-    .left{display:flex;align-items:center;gap:12px;}
-    .doc-icon{width:36px;height:36px;border-radius:10px;background:var(--chip);display:grid;place-items:center;}
-    .doc-icon svg{width:18px;height:18px;}
-    .label{font-size:16px;}
-    .chev{width:20px;height:20px;opacity:.55;}
+    /* First page list */
+    .section-title{margin:14px 16px 8px;font-weight:700;font-size:18px}
+    .content{padding:0 16px 20px;flex:1}
+    .list{border-radius:16px}
+    .cell{display:flex;align-items:center;justify-content:space-between;padding:12px 6px 12px 0}
+    .cell+.cell{border-top:1px solid var(--line)}
+    .left{display:flex;align-items:center;gap:12px}
+    .doc-icon{width:36px;height:36px;border-radius:10px;background:var(--chip);display:grid;place-items:center}
+    .doc-icon svg{width:18px;height:18px}
+    .label{font-size:16px}
+    .chev{width:20px;height:20px;opacity:.55}
 
-    /* ====== СЕГМЕНТ (Документ/Реквизиты) ====== */
-    .seg{margin:10px 16px;background:#F1F0F0;border-radius:12px;padding:2px;display:flex;gap:2px;}
+    /* Segmented control */
+    .seg{margin:10px 16px;background:var(--seg);border-radius:12px;padding:2px;display:flex;gap:2px}
     .seg button{
-      flex:1;border:none;background:transparent;padding:8px 0;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;
+      flex:1;border:none;background:transparent;padding:8px 0;border-radius:10px;
+      font-weight:700;font-size:13px;color:#111;cursor:pointer;
     }
-    .seg .active{background:#fff;}
+    .seg .active{background:#fff;color:#111}
 
-    /* ====== СТРАНИЦЫ ====== */
-    .page{display:none;flex-direction:column;min-height:100%;}
-    .page.active{display:flex;}
-    .screen-body{flex:1;display:flex;flex-direction:column;}
+    /* Pages */
+    .page{display:none;flex-direction:column;min-height:100%}
+    .page.active{display:flex}
+    .screen-body{flex:1;display:flex;flex-direction:column}
 
-    /* ====== ЗОНА ДОБАВЛЕНИЯ СКРИНА (строго по центру) ====== */
-    .upload-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0 16px;}
-    .dropzone{
+    /* Upload zone */
+    .upload-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0 16px}
+    .drop{
       width:86%;max-width:300px;min-height:224px;
-      border:2px dashed #D8D8D8;border-radius:16px;
-      display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;
+      border:2px dashed var(--dash);border-radius:16px;
+      display:flex;align-items:center;justify-content:center;
     }
-    .dropzone button{
-      border:1px solid #C9C9C9;background:#fff;border-radius:10px;
-      padding:10px 12px;font-weight:600;font-size:13px;cursor:pointer;
+    .add-btn{
+      border:1px solid #d0d0d0;background:#fff;border-radius:12px;
+      padding:12px 16px;font-weight:700;font-size:16px;cursor:pointer;
     }
-    .preview{display:none;align-items:center;justify-content:center;width:100%;}
-    .preview img{max-width:86%;border-radius:12px;display:block;}
+    .preview{display:none;align-items:center;justify-content:center;width:100%}
+    .preview img{max-width:86%;border-radius:12px;display:block}
 
-    /* ====== СПИСОК РЕКВИЗИТОВ ====== */
-    .details{padding:0 16px 90px;}
-    .kv{margin:16px 0;}
-    .kv .k{font-size:12px;color:#8A8A8A;margin-bottom:6px;}
-    .kv .v{font-size:14px;color:#0b0b0c;}
+    /* Details */
+    .details{padding:0 16px 90px}
+    .kv{margin:16px 0}
+    .kv .k{font-size:12px;color:#8A8A8A;margin-bottom:6px}
+    .kv .v{font-size:14px;color:#0b0b0c}
 
-    /* ====== НИЖНЯЯ ПАНЕЛЬ (кнопки) ====== */
+    /* Bottom buttons */
     .bottom{
       padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-      position:sticky; bottom:0; background:#fff; border-top:1px solid var(--line);
-      display:grid; gap:12px;
+      position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);
+      display:grid;gap:12px
     }
     .btn{
-      border:none;background:var(--primary);color:#fff;border-radius:12px;
-      padding:14px 16px;font-size:14px;font-weight:700;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;gap:10px;
+      border:none;background:var(--blue);color:#fff;border-radius:14px;
+      padding:16px 16px;font-size:16px;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:10px
     }
-    .btn:active{background:var(--primary-press);}
+    .btn:active{background:var(--blue-press)}
     .btn-outline{
-      border:2px solid var(--outline);color:var(--outline);background:#fff;
+      background:#fff;color:var(--blue-outline);border:2px solid var(--blue-outline)
     }
 
-    /* ====== УТИЛИТЫ ====== */
-    .hidden{display:none !important;}
+    /* Utils */
+    .hidden{display:none!important}
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- ====== СТРАНИЦА 1: СПИСОК ====== -->
+    <!-- PAGE 1 -->
     <section class="page active" id="page-list">
       <header>
         <div class="title">Цифровые документы</div>
@@ -126,7 +119,7 @@
             <div class="left">
               <div class="doc-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none">
-                  <rect x="4" y="3" width="16" height="18" rx="3" stroke="#7A7A7A" />
+                  <rect x="4" y="3" width="16" height="18" rx="3" stroke="#7A7A7A"/>
                   <rect x="7" y="7" width="10" height="3" rx="1" fill="#7A7A7A"/>
                   <rect x="7" y="12" width="10" height="2" rx="1" fill="#B5B5B5"/>
                 </svg>
@@ -141,10 +134,10 @@
       </div>
     </section>
 
-    <!-- ====== СТРАНИЦА 2: ДОКУМЕНТ ====== -->
+    <!-- PAGE 2 -->
     <section class="page" id="page-doc">
       <header>
-        <div class="back" id="back-from-doc" aria-label="Назад">
+        <div class="back" id="back-from-doc">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 19l-7-7 7-7" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -152,37 +145,36 @@
         <div class="title">Удостоверение личности</div>
       </header>
 
-      <div class="seg" role="tablist">
+      <div class="seg">
         <button class="active" id="tab-doc">Документ</button>
         <button id="tab-req">Реквизиты</button>
       </div>
 
       <div class="screen-body">
         <div class="upload-wrap">
-          <div class="dropzone" id="dropzone">
-            <button id="add-photo">Добавить фото</button>
-            <input type="file" id="file-input" accept="image/*" style="display:none" />
+          <div class="drop" id="dropzone">
+            <button class="add-btn" id="add-photo">Добавить фото</button>
+            <input type="file" id="file-input" accept="image/*" style="display:none">
           </div>
           <div class="preview" id="preview">
-            <img id="preview-img" alt="Добавленное изображение" />
+            <img id="preview-img" alt="скрин">
           </div>
         </div>
 
         <div class="bottom">
           <button class="btn" id="show-doc">
+            <!-- иконку в макете я не добавляю, чтобы не «добавлять своё» -->
             Предъявить документ
           </button>
-          <button class="btn btn-outline" id="send-doc">
-            Отправить документ
-          </button>
+          <button class="btn btn-outline" id="send-doc">Отправить документ</button>
         </div>
       </div>
     </section>
 
-    <!-- ====== СТРАНИЦА 3: РЕКВИЗИТЫ ====== -->
+    <!-- PAGE 3 -->
     <section class="page" id="page-req">
       <header>
-        <div class="back" id="back-from-req" aria-label="Назад">
+        <div class="back" id="back-from-req">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 19l-7-7 7-7" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -190,36 +182,18 @@
         <div class="title">Удостоверение личности</div>
       </header>
 
-      <div class="seg" role="tablist">
+      <div class="seg">
         <button id="tab-doc-2">Документ</button>
         <button class="active" id="tab-req-2">Реквизиты</button>
       </div>
 
       <div class="details">
-        <div class="kv">
-          <div class="k">ФИО</div>
-          <div class="v">Аманжан Галымбек Арманулы</div>
-        </div>
-        <div class="kv">
-          <div class="k">ИИН</div>
-          <div class="v">031202550128</div>
-        </div>
-        <div class="kv">
-          <div class="k">Дата рождения</div>
-          <div class="v">02.12.2003</div>
-        </div>
-        <div class="kv">
-          <div class="k">Номер документа</div>
-          <div class="v">060756844</div>
-        </div>
-        <div class="kv">
-          <div class="k">Дата выдачи</div>
-          <div class="v">21.12.2019</div>
-        </div>
-        <div class="kv">
-          <div class="k">Срок действия</div>
-          <div class="v">20.12.2029</div>
-        </div>
+        <div class="kv"><div class="k">ФИО</div><div class="v">Аманжан Галымбек Арманулы</div></div>
+        <div class="kv"><div class="k">ИИН</div><div class="v">031202550128</div></div>
+        <div class="kv"><div class="k">Дата рождения</div><div class="v">02.12.2003</div></div>
+        <div class="kv"><div class="k">Номер документа</div><div class="v">060756844</div></div>
+        <div class="kv"><div class="k">Дата выдачи</div><div class="v">21.12.2019</div></div>
+        <div class="kv"><div class="k">Срок действия</div><div class="v">20.12.2029</div></div>
       </div>
 
       <div class="bottom">
@@ -229,55 +203,49 @@
   </div>
 
   <script>
-    // ====== Навигация между страницами ======
+    // Навигация
     const pageList = document.getElementById('page-list');
     const pageDoc  = document.getElementById('page-doc');
     const pageReq  = document.getElementById('page-req');
-
-    const openDoc = document.getElementById('open-doc');
+    const openDoc  = document.getElementById('open-doc');
     const backFromDoc = document.getElementById('back-from-doc');
     const backFromReq = document.getElementById('back-from-req');
-
-    const tabReq  = document.getElementById('tab-req');
+    const tabReq = document.getElementById('tab-req');
     const tabDoc2 = document.getElementById('tab-doc-2');
 
     function show(el){
-      [pageList, pageDoc, pageReq].forEach(p=>p.classList.remove('active'));
+      [pageList,pageDoc,pageReq].forEach(p=>p.classList.remove('active'));
       el.classList.add('active');
-      window.scrollTo({top:0, behavior:'instant'});
+      window.scrollTo({top:0,behavior:'instant'});
     }
+    openDoc.addEventListener('click', ()=>show(pageDoc));
+    backFromDoc.addEventListener('click', ()=>show(pageList));
+    backFromReq.addEventListener('click', ()=>show(pageList));
+    tabReq.addEventListener('click', ()=>show(pageReq));
+    tabDoc2.addEventListener('click', ()=>show(pageDoc));
 
-    openDoc.addEventListener('click', ()=> show(pageDoc));
-    backFromDoc.addEventListener('click', ()=> show(pageList));
-    backFromReq.addEventListener('click', ()=> show(pageList));
-    tabReq.addEventListener('click', ()=> show(pageReq));
-    tabDoc2.addEventListener('click', ()=> show(pageDoc));
-
-    // ====== Добавление изображения (один раз; после — скрыть зону изменения) ======
+    // Добавление скрина (1 раз)
     const addPhotoBtn = document.getElementById('add-photo');
-    const fileInput   = document.getElementById('file-input');
-    const dropzone    = document.getElementById('dropzone');
-    const preview     = document.getElementById('preview');
-    const previewImg  = document.getElementById('preview-img');
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('preview-img');
 
-    addPhotoBtn.addEventListener('click', ()=> fileInput.click());
+    addPhotoBtn.addEventListener('click', ()=>fileInput.click());
     fileInput.addEventListener('change', (e)=>{
-      const file = e.target.files && e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
         previewImg.src = ev.target.result;
         preview.style.display = 'flex';
-        dropzone.classList.add('hidden'); // скрываем возможность изменения
+        dropzone.classList.add('hidden'); // скрыть изменение
       };
-      reader.readAsDataURL(file);
+      r.readAsDataURL(f);
     });
 
-    // ====== Регистрация SW (PWA) ======
     if('serviceWorker' in navigator){
-      window.addEventListener('load', ()=>{
-        navigator.serviceWorker.register('sw.js').catch(()=>{});
-      });
+      window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
     }
   </script>
 </body>

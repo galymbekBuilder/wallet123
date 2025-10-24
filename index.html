@@ -4,141 +4,131 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Цифровые документы</title>
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <style>
+    /* ====== БАЗА (iPhone 15 Pro — 393px) ====== */
     :root{
-      --bg:#ffffff;
+      --page-w:393px;
+      --bg:#fff;
       --text:#0b0b0c;
-      --sub:#6a6a6a;
-      --blue:#155EE1;
-      --blue-press:#0E4AB4;
-      --border:#E6E6E6;
-      --seg-bg:#F1F0F0;
-      --btn-outline:#2E6BE6;
-      --shadow:0 1px 2px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.06);
-      --radius:14px;
+      --muted:#6f6f6f;
+      --line:#e7e7e7;
+      --chip:#F1F0F0;
+      --primary:#155EE1;
+      --primary-press:#0E4AB4;
+      --outline:#2E6BE6;
     }
-    *{box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
-    html,body{height:100%;}
+    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       background:var(--bg);
       color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      font-size:16px; line-height:1.25;
     }
     .app{
-      max-width: 375px;
-      margin:0 auto;
-      min-height:100dvh;
-      display:flex;
-      flex-direction:column;
+      width:100%; max-width:var(--page-w); margin:0 auto;
+      min-height:100dvh; display:flex; flex-direction:column; background:#fff;
     }
+
+    /* ====== ХЕДЕР ====== */
     header{
       position:sticky; top:0;
-      background:#fff;
-      padding:16px 16px 10px;
-      box-shadow: var(--shadow);
-      z-index:5;
+      display:flex; align-items:center; gap:8px;
+      background:#fff; padding:calc(env(safe-area-inset-top) + 6px) 16px 10px;
+      border-bottom:1px solid var(--line);
+      z-index:10;
     }
-    .back{
-      width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
-      margin-right:8px; cursor:pointer;
-    }
-    .back svg{display:block;}
-    .title{
-      font-size:18px; font-weight:700; line-height:1.2;
-    }
-    .section-title{
-      margin:12px 16px 8px; font-size:18px; font-weight:700;
-    }
-    .content{padding:0 16px 20px; flex:1;}
-    .list{
-      border-radius:16px;
-    }
+    .back{width:28px;height:28px;display:grid;place-items:center;cursor:pointer;}
+    .title{font-size:18px;font-weight:700;}
+
+    /* ====== СЕКЦИИ / СПИСОК ====== */
+    .section-title{margin:14px 16px 8px;font-weight:700;font-size:18px;}
+    .content{padding:0 16px 20px;flex:1;}
+    .list{border-radius:16px;}
     .cell{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 8px 12px 0;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 6px 12px 0;
     }
-    .cell + .cell{border-top:1px solid var(--border);}
-    .cell .left{display:flex; align-items:center; gap:12px;}
-    .doc-icon{
-      width:32px; height:32px; border-radius:10px; background:#F1F0F0; display:grid; place-items:center;
-    }
-    .doc-icon svg{width:18px; height:18px;}
-    .cell .label{font-size:16px;}
-    .chev{width:20px; height:20px; opacity:.5;}
-    .btn{
-      border:none; background:var(--blue); color:#fff; width:100%; border-radius:12px; padding:14px 16px; font-size:14px; font-weight:600;
-      display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;
-    }
-    .btn:active{background:var(--blue-press);}
-    .btn-outline{
-      border:2px solid var(--btn-outline); color:var(--btn-outline); background:#fff;
-    }
-    .btn + .btn{margin-top:14px;}
-    .refresh-wrap{padding:0 16px 24px;}
-    .refresh{border:1px solid #2E6BE6; color:#2E6BE6; background:#fff; width:100%; border-radius:8px; padding:10px; font-size:12px; font-weight:600; cursor:pointer;}
-    /* Segmented control */
-    .seg{
-      margin:0 16px; background:var(--seg-bg); border-radius:12px; padding:2px; display:flex; gap:2px;
-    }
+    .cell + .cell{border-top:1px solid var(--line);}
+    .left{display:flex;align-items:center;gap:12px;}
+    .doc-icon{width:36px;height:36px;border-radius:10px;background:var(--chip);display:grid;place-items:center;}
+    .doc-icon svg{width:18px;height:18px;}
+    .label{font-size:16px;}
+    .chev{width:20px;height:20px;opacity:.55;}
+
+    /* ====== СЕГМЕНТ (Документ/Реквизиты) ====== */
+    .seg{margin:10px 16px;background:#F1F0F0;border-radius:12px;padding:2px;display:flex;gap:2px;}
     .seg button{
-      flex:1; background:transparent; border:none; padding:8px 0; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px;
+      flex:1;border:none;background:transparent;padding:8px 0;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;
     }
-    .seg .active{background:#fff; box-shadow:var(--shadow);}
-    /* Pages */
-    .page{display:none; flex-direction:column; min-height:100%;}
+    .seg .active{background:#fff;}
+
+    /* ====== СТРАНИЦЫ ====== */
+    .page{display:none;flex-direction:column;min-height:100%;}
     .page.active{display:flex;}
-    .screen-body{flex:1; display:flex; flex-direction:column;}
-    /* Upload area */
-    .upload-wrap{
-      flex:1;
-      display:flex; align-items:center; justify-content:center;
-      padding:16px;
-    }
+    .screen-body{flex:1;display:flex;flex-direction:column;}
+
+    /* ====== ЗОНА ДОБАВЛЕНИЯ СКРИНА (строго по центру) ====== */
+    .upload-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0 16px;}
     .dropzone{
-      width:86%; max-width:280px; min-height:220px;
-      border:2px dashed #D8D8D8; border-radius:16px;
-      display:flex; align-items:center; justify-content:center; text-align:center;
-      padding:16px;
+      width:86%;max-width:300px;min-height:224px;
+      border:2px dashed #D8D8D8;border-radius:16px;
+      display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;
     }
-    .dropzone button{border:1px solid #C9C9C9; background:#fff; border-radius:10px; padding:10px 12px; font-weight:600; font-size:13px; cursor:pointer;}
-    .preview{
-      display:none; align-items:center; justify-content:center;
-      width:100%;
+    .dropzone button{
+      border:1px solid #C9C9C9;background:#fff;border-radius:10px;
+      padding:10px 12px;font-weight:600;font-size:13px;cursor:pointer;
     }
-    .preview img{max-width:86%; border-radius:12px; box-shadow:var(--shadow);}
-    /* Details list */
+    .preview{display:none;align-items:center;justify-content:center;width:100%;}
+    .preview img{max-width:86%;border-radius:12px;display:block;}
+
+    /* ====== СПИСОК РЕКВИЗИТОВ ====== */
     .details{padding:0 16px 90px;}
     .kv{margin:16px 0;}
-    .kv .k{font-size:12px; color:#8A8A8A; margin-bottom:6px;}
-    .kv .v{font-size:14px; color:#0b0b0c;}
-    /* Bottom area */
+    .kv .k{font-size:12px;color:#8A8A8A;margin-bottom:6px;}
+    .kv .v{font-size:14px;color:#0b0b0c;}
+
+    /* ====== НИЖНЯЯ ПАНЕЛЬ (кнопки) ====== */
     .bottom{
-      padding:16px; position:sticky; bottom:0; background:#fff; box-shadow: 0 -6px 16px rgba(0,0,0,0.05);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+      position:sticky; bottom:0; background:#fff; border-top:1px solid var(--line);
+      display:grid; gap:12px;
     }
-    /* Utility */
-    .hidden{display:none!important;}
+    .btn{
+      border:none;background:var(--primary);color:#fff;border-radius:12px;
+      padding:14px 16px;font-size:14px;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+    }
+    .btn:active{background:var(--primary-press);}
+    .btn-outline{
+      border:2px solid var(--outline);color:var(--outline);background:#fff;
+    }
+
+    /* ====== УТИЛИТЫ ====== */
+    .hidden{display:none !important;}
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- PAGE 1 -->
+    <!-- ====== СТРАНИЦА 1: СПИСОК ====== -->
     <section class="page active" id="page-list">
       <header>
         <div class="title">Цифровые документы</div>
       </header>
+
       <div class="section-title">Мои документы</div>
       <div class="content">
-        <div class="list card">
+        <div class="list">
           <div class="cell" id="open-doc">
             <div class="left">
               <div class="doc-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none">
                   <rect x="4" y="3" width="16" height="18" rx="3" stroke="#7A7A7A" />
                   <rect x="7" y="7" width="10" height="3" rx="1" fill="#7A7A7A"/>
-                  <rect x="7" y="12" width="10" height="1.8" rx=".9" fill="#B5B5B5"/>
+                  <rect x="7" y="12" width="10" height="2" rx="1" fill="#B5B5B5"/>
                 </svg>
               </div>
               <div class="label">Удостоверение личности</div>
@@ -149,12 +139,9 @@
           </div>
         </div>
       </div>
-      <div class="refresh-wrap">
-        <button class="refresh">Обновить список документов</button>
-      </div>
     </section>
 
-    <!-- PAGE 2 -->
+    <!-- ====== СТРАНИЦА 2: ДОКУМЕНТ ====== -->
     <section class="page" id="page-doc">
       <header>
         <div class="back" id="back-from-doc" aria-label="Назад">
@@ -173,28 +160,26 @@
       <div class="screen-body">
         <div class="upload-wrap">
           <div class="dropzone" id="dropzone">
-            <div>
-              <button id="add-photo">Добавить фото</button>
-              <input type="file" id="file-input" accept="image/*" style="display:none">
-            </div>
+            <button id="add-photo">Добавить фото</button>
+            <input type="file" id="file-input" accept="image/*" style="display:none" />
           </div>
           <div class="preview" id="preview">
-            <img id="preview-img" alt="Добавленное изображение">
+            <img id="preview-img" alt="Добавленное изображение" />
           </div>
         </div>
+
         <div class="bottom">
           <button class="btn" id="show-doc">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M3 5h18M3 12h18M3 19h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-            </svg>
             Предъявить документ
           </button>
-          <button class="btn btn-outline">Отправить документ</button>
+          <button class="btn btn-outline" id="send-doc">
+            Отправить документ
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- PAGE 3 -->
+    <!-- ====== СТРАНИЦА 3: РЕКВИЗИТЫ ====== -->
     <section class="page" id="page-req">
       <header>
         <div class="back" id="back-from-req" aria-label="Назад">
@@ -215,27 +200,22 @@
           <div class="k">ФИО</div>
           <div class="v">Аманжан Галымбек Арманулы</div>
         </div>
-
         <div class="kv">
           <div class="k">ИИН</div>
           <div class="v">031202550128</div>
         </div>
-
         <div class="kv">
           <div class="k">Дата рождения</div>
           <div class="v">02.12.2003</div>
         </div>
-
         <div class="kv">
           <div class="k">Номер документа</div>
           <div class="v">060756844</div>
         </div>
-
         <div class="kv">
           <div class="k">Дата выдачи</div>
           <div class="v">21.12.2019</div>
         </div>
-
         <div class="kv">
           <div class="k">Срок действия</div>
           <div class="v">20.12.2029</div>
@@ -249,17 +229,16 @@
   </div>
 
   <script>
-    // Simple page navigation
+    // ====== Навигация между страницами ======
     const pageList = document.getElementById('page-list');
-    const pageDoc = document.getElementById('page-doc');
-    const pageReq = document.getElementById('page-req');
+    const pageDoc  = document.getElementById('page-doc');
+    const pageReq  = document.getElementById('page-req');
 
     const openDoc = document.getElementById('open-doc');
     const backFromDoc = document.getElementById('back-from-doc');
     const backFromReq = document.getElementById('back-from-req');
 
-    const tabReq = document.getElementById('tab-req');
-    const tabDoc = document.getElementById('tab-doc');
+    const tabReq  = document.getElementById('tab-req');
     const tabDoc2 = document.getElementById('tab-doc-2');
 
     function show(el){
@@ -271,16 +250,15 @@
     openDoc.addEventListener('click', ()=> show(pageDoc));
     backFromDoc.addEventListener('click', ()=> show(pageList));
     backFromReq.addEventListener('click', ()=> show(pageList));
-
     tabReq.addEventListener('click', ()=> show(pageReq));
     tabDoc2.addEventListener('click', ()=> show(pageDoc));
 
-    // Image upload (only once; hide controls after added)
+    // ====== Добавление изображения (один раз; после — скрыть зону изменения) ======
     const addPhotoBtn = document.getElementById('add-photo');
-    const fileInput = document.getElementById('file-input');
-    const dropzone = document.getElementById('dropzone');
-    const preview = document.getElementById('preview');
-    const previewImg = document.getElementById('preview-img');
+    const fileInput   = document.getElementById('file-input');
+    const dropzone    = document.getElementById('dropzone');
+    const preview     = document.getElementById('preview');
+    const previewImg  = document.getElementById('preview-img');
 
     addPhotoBtn.addEventListener('click', ()=> fileInput.click());
     fileInput.addEventListener('change', (e)=>{
@@ -290,12 +268,12 @@
       reader.onload = (ev)=>{
         previewImg.src = ev.target.result;
         preview.style.display = 'flex';
-        dropzone.classList.add('hidden'); // hide controls so user can't change
+        dropzone.classList.add('hidden'); // скрываем возможность изменения
       };
       reader.readAsDataURL(file);
     });
 
-    // PWA service worker
+    // ====== Регистрация SW (PWA) ======
     if('serviceWorker' in navigator){
       window.addEventListener('load', ()=>{
         navigator.serviceWorker.register('sw.js').catch(()=>{});

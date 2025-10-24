@@ -1,5 +1,4 @@
-const CACHE = 'digital-docs-v3'; // ← увеличивай номер при каждом обновлении
-
+const CACHE = 'digital-docs-v3'; // увеличивай номер при обновлениях
 const ASSETS = [
   './',
   './index.html',
@@ -8,31 +7,23 @@ const ASSETS = [
   './icon-512.png'
 ];
 
-// Установка service worker и кэширование основных файлов
-self.addEventListener('install', event => {
-  event.waitUntil(
+self.addEventListener('install', (e) => {
+  e.waitUntil(
     caches.open(CACHE)
-      .then(cache => cache.addAll(ASSETS))
+      .then(c => c.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
 });
 
-// Активация и очистка старых кэшей
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-      );
-    }).then(() => self.clients.claim())
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// Перехват запросов — отдаём из кэша, если есть, иначе из сети
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request))
   );
 });

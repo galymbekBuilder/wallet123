@@ -1,4 +1,4 @@
-const CACHE = 'digital-docs-v1';
+const CACHE = 'digital-docs-v2';
 const ASSETS = [
   './',
   './index.html',

@@ -1,4 +1,4 @@
-const CACHE = 'digital-docs-v3'; // увеличивай номер при обновлениях
+const CACHE = 'digital-docs-v4'; // увеличивай номер при обновлениях
 const ASSETS = [
   './',
   './index.html',
